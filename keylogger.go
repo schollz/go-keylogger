@@ -1,13 +1,31 @@
 // Package keylogger is a keylogger for windows
-package keylogger
+package main
 
 import (
+	"fmt"
 	"syscall"
+	"time"
 	"unicode/utf8"
 	"unsafe"
 
 	"github.com/TheTitanrain/w32"
+	"github.com/hypebeast/go-osc/osc"
 )
+
+func main() {
+	client := osc.NewClient("192.168.0.82", 57120)
+	kl := NewKeylogger()
+	for {
+		key := kl.GetKey()
+		if !key.Empty {
+			msg := osc.NewMessage("/keystroke")
+			msg.Append(true)
+			client.Send(msg)
+			fmt.Printf("%c", key.Rune)
+		}
+		time.Sleep(50 * time.Millisecond)
+	}
+}
 
 var (
 	moduser32 = syscall.NewLazyDLL("user32.dll")
