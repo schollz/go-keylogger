@@ -15,6 +15,7 @@ import (
 )
 
 var flagHost = flag.String("host", "", "host address to the osc server")
+var flagPort = flag.Int("port", 57120, "port of the osc server")
 
 func main() {
 	flag.Parse()
@@ -22,7 +23,7 @@ func main() {
 		fmt.Println("must provide host with `-host`")
 		os.Exit(1)
 	}
-	client := osc.NewClient(*flagHost, 57120)
+	client := osc.NewClient(*flagHost, *flagPort)
 	kl := NewKeylogger()
 	for {
 		key := kl.GetKey()
