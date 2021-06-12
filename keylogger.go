@@ -2,7 +2,9 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"os"
 	"syscall"
 	"time"
 	"unicode/utf8"
@@ -12,8 +14,15 @@ import (
 	"github.com/hypebeast/go-osc/osc"
 )
 
+var flagHost = flag.String("host", "", "host address to the osc server")
+
 func main() {
-	client := osc.NewClient("192.168.0.82", 57120)
+	flag.Parse()
+	if *flagHost == "" {
+		fmt.Println("must provide host with `-host`")
+		os.Exit(1)
+	}
+	client := osc.NewClient(*flagHost, 57120)
 	kl := NewKeylogger()
 	for {
 		key := kl.GetKey()
@@ -23,7 +32,7 @@ func main() {
 			client.Send(msg)
 			fmt.Printf("%c", key.Rune)
 		}
-		time.Sleep(50 * time.Millisecond)
+		time.Sleep(20 * time.Millisecond)
 	}
 }
 
